@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#mailutils
+
+while true; do 
+	echo Starting mining on $HOSTNAME
+
+	./ethminer -U -P stratum://0xee99a84687320348ce34544854d58e5d8346d878.$HOSTNAME@eu1.ethermine.org:4444 --report-hashrate --farm-recheck 3000
+	
+	echo sending mail
+	mail -s '$HOSTNAME offline' ingar@megarden.no <<< '$HOSTNAME not mining restaring miner'
+	
+	echo Sleeping 10 secounds before restarting
+	sleep 10
+
+done
+
+
+#!/bin/bash
+
+cd /home/user/bin
+
+while true; do 
+        echo Starting mining on $HOSTNAME
+
+        ./t-rex -a ethash -o stratum+tcp://eu1.ethermine.org:4444 -u 0xee99a84687320348ce34544854d58e5d8346d878  -w plex
+
+        echo sending mail
+        mail -s '$HOSTNAME offline' ingar@megarden.no <<< '$HOSTNAME not mining restaring miner'
+
+        echo Sleeping 10 secounds before restarting
+        sleep 10
+
+done
+
+
+
