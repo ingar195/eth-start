@@ -23,7 +23,7 @@ def getIdleTime():
 
 def run(idleTimeReq):
     print(Fore.YELLOW + "Time were greater than {}, starting mining".format(idleTimeReq))
-    os.system("start " + '"" ' + '"C:\\Program Files\\EthMiner\\t-rex.exe"' + "  --autoupdate -a ethash --url stratum+tcp://eu1.ethermine.org:4444 --user 0xbd841C01C749EAFed0aebeb84d0edd99171E65Af --pass x --worker %COMPUTERNAME%")
+    os.system("start " + '"" ' + '"C:\\Program Files\\EthMiner\\t-rex.exe"' + "  --autoupdate -a ethash --url stratum+tcp://eu1.ethermine.org:4444 --user *ETH WALLET ADRESS* --pass x --worker %COMPUTERNAME%")
 
 def kill(idleTimeReq):
 	print(Fore.RED + "Stopping mining since idle time were less than {}".format(idleTimeReq))
