@@ -31,7 +31,7 @@ def kill(idleTimeReq):
 
 def main():
 	print("Starting")
-	idleTimeReq = 1   # Idle time before start in Seconds
+	idleTimeReq = 600   # Idle time before start in Seconds
 	refreshRate = 60    # How often to check in Seconds
 	mining = False
 	msg = False
