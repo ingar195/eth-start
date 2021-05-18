@@ -1,37 +1,65 @@
-#!/bin/bash
-
-#mailutils
-
-while true; do 
-	echo Starting mining on $HOSTNAME
-
-	./ethminer -U -P stratum://0xee99a84687320348ce34544854d58e5d8346d878.$HOSTNAME@eu1.ethermine.org:4444 --report-hashrate --farm-recheck 3000
-	
-	echo sending mail
-	mail -s '$HOSTNAME offline' ingar@megarden.no <<< '$HOSTNAME not mining restaring miner'
-	
-	echo Sleeping 10 secounds before restarting
-	sleep 10
-
-done
+import os
+# Install dependencies
+depList = ["colorama", "pywin32"]
+for item in depList:
+    os.system("py -m pip install {}".format(item))
+from colorama import Fore, init
+from ctypes import Structure, windll, c_uint, sizeof, byref, c_ulong
 
 
-#!/bin/bash
+class LASTINPUTINFO(Structure):
+	_fields_ = [
+		('cbSize', c_uint),
+		('dwTime', c_uint),
+	]
 
-cd /home/user/bin
+def getIdleTime():
+	lastInputInfo = LASTINPUTINFO()
+	lastInputInfo.cbSize = sizeof(lastInputInfo)
+	windll.user32.GetLastInputInfo(byref(lastInputInfo))
+	getTickcount = c_ulong(windll.kernel32.GetTickCount64())
+	idleTime = getTickcount.value - lastInputInfo.dwTime
+	return idleTime / 1000.0
 
-while true; do 
-        echo Starting mining on $HOSTNAME
+def run(idleTimeReq):
+    print(Fore.YELLOW + "Time were greater than {}, starting mining".format(idleTimeReq))
+    os.system("start " + '"" ' + '"C:\\Program Files\\EthMiner\\t-rex.exe"' + "  --autoupdate -a ethash --url stratum+tcp://eu1.ethermine.org:4444 --user 0xbd841C01C749EAFed0aebeb84d0edd99171E65Af --pass x --worker %COMPUTERNAME%")
 
-        ./t-rex -a ethash -o stratum+tcp://eu1.ethermine.org:4444 -u 0xee99a84687320348ce34544854d58e5d8346d878  -w plex
+def kill(idleTimeReq):
+	print(Fore.RED + "Stopping mining since idle time were less than {}".format(idleTimeReq))
+	os.system("taskkill /F /IM T-REX*")
 
-        echo sending mail
-        mail -s '$HOSTNAME offline' ingar@megarden.no <<< '$HOSTNAME not mining restaring miner'
+def main():
+	print("Starting")
+	idleTimeReq = 1   # Idle time before start in Seconds
+	refreshRate = 60    # How often to check in Seconds
+	mining = False
+	msg = False
+	while True:
+		print(Fore.GREEN + "Idle time = {}".format(getIdleTime()))
+		if getIdleTime() >= idleTimeReq:
+			if mining == False:
+				run(idleTimeReq)
+				mining = True
+			else:
+				if msg == False:
+					print(Fore.YELLOW + "Mining already running, not staring")
+					msg = True
+		elif getIdleTime() <= idleTimeReq and mining == True:
+			kill(idleTimeReq)
+			mining = False
+		print("Waiting {} seconds to check again".format(refreshRate))
+		print(" ")
+		time.sleep(refreshRate)
 
-        echo Sleeping 10 secounds before restarting
-        sleep 10
+#Run Script
+if __name__ == "__main__":
+	try:
+		init(autoreset=True)
+		main()
+	except KeyboardInterrupt:
+		kill("600")
+		print ("Script Interrupted")
 
-done
 
-
-
+    
