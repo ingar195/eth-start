@@ -1,6 +1,6 @@
 import os
 # Install dependencies
-depList = ["colorama", "pywin32"]
+depList = ["colorama"]
 for item in depList:
     os.system("py -m pip install {}".format(item))
 from colorama import Fore, init
