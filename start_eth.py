@@ -1,8 +1,12 @@
+# Load and Install dependencies
 import os
-# Install dependencies
-depList = ["colorama"]
-for item in depList:
-    os.system("py -m pip install {}".format(item))
+import time
+import subprocess
+try:
+	subprocess.run("py -m pip install colorama", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+except Exception as e:
+	print (e)
+	exit()
 from colorama import Fore, init
 from ctypes import Structure, windll, c_uint, sizeof, byref, c_ulong
 
@@ -22,12 +26,15 @@ def getIdleTime():
 	return idleTime / 1000.0
 
 def run(idleTimeReq):
-    print(Fore.YELLOW + "Time were greater than {}, starting mining".format(idleTimeReq))
-    os.system("start " + '"" ' + '"C:\\Program Files\\EthMiner\\t-rex.exe"' + "  --autoupdate -a ethash --url stratum+tcp://eu1.ethermine.org:4444 --user *ETH WALLET ADRESS* --pass x --worker %COMPUTERNAME%")
+    print(Fore.YELLOW + "Time were greater than {} Seconds, starting mining".format(idleTimeReq))
+    os.system("start " + '"" ' + '"C:\\Program Files\\EthMiner\\t-rex.exe"' + "  --autoupdate -a ethash --url stratum+tcp://eu1.ethermine.org:4444 --user **YOUR ETH WALLET ADRESS** --pass x --worker %COMPUTERNAME%")
 
-def kill(idleTimeReq):
-	print(Fore.RED + "Stopping mining since idle time were less than {}".format(idleTimeReq))
-	os.system("taskkill /F /IM T-REX*")
+def kill(idleTimeReq, interrupted):
+	try:
+		subprocess.run('taskkill /IM t-rex.exe', check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+		print(Fore.RED + "Stopping mining since idle time were less than {} Seconds".format(int(idleTimeReq)))
+	except:
+		pass
 
 def main():
 	print("Starting")
@@ -46,10 +53,9 @@ def main():
 					print(Fore.YELLOW + "Mining already running, not staring")
 					msg = True
 		elif getIdleTime() <= idleTimeReq and mining == True:
-			kill(idleTimeReq)
+			kill(idleTimeReq,False)
 			mining = False
-		print("Waiting {} seconds to check again".format(refreshRate))
-		print(" ")
+		print("Waiting {} seconds to check again\n".format(refreshRate))
 		time.sleep(refreshRate)
 
 #Run Script
@@ -58,7 +64,7 @@ if __name__ == "__main__":
 		init(autoreset=True)
 		main()
 	except KeyboardInterrupt:
-		kill("600")
+		kill(None,True)
 		print ("Script Interrupted")
 
 
