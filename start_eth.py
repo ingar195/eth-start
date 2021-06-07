@@ -2,8 +2,6 @@
 import os
 import time
 import subprocess
-from urllib import request
-
 try:
 	subprocess.run("py -m pip install colorama", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 except Exception as e:
@@ -27,46 +25,38 @@ def getIdleTime():
 	idleTime = getTickcount.value - lastInputInfo.dwTime
 	return idleTime / 1000.0
 
+def run(idleTimeReq):
+    print(Fore.YELLOW + "Time were greater than {} Seconds, starting mining".format(idleTimeReq))
+    os.system("start " + '"" ' + '"C:\\Program Files\\EthMiner\\t-rex.exe"' + "  -c config.cfg")
 
-def startMiner():
-    os.system("start " + '"" ' + '"C:\\Program Files\\EthMiner\\t-rex.exe"' + " -c config.cfg")
-
-
-def gpuControl(enable, selectedGPU):
-	request.urlopen("http://127.0.0.1:4067/control?pause={}:{}".format(enable, selectedGPU))
-
+def kill(idleTimeReq, interrupted):
+	try:
+		subprocess.run('taskkill /IM t-rex.exe', check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+		print(Fore.RED + "Stopping mining since idle time were less than {} Seconds".format(int(idleTimeReq)))
+	except:
+		pass
 
 def main():
 	print("Starting")
-	idleTimeReq = 5   # Idle time before start in Seconds
-	refreshRate = 1    # How often to check in Seconds
+	idleTimeReq = 600   # Idle time before start in Seconds
+	refreshRate = 60    # How often to check in Seconds
 	mining = False
 	msg = False
-	startMiner()
-	while True:		
+	while True:
 		print(Fore.GREEN + "Idle time = {}".format(getIdleTime()))
 		if getIdleTime() >= idleTimeReq:
 			if mining == False:
-				
-				print(Fore.GREEN + "Un pause mining since idle time were less than {} Seconds".format(int(idleTimeReq)))
-				gpuControl("false", "0")
+				run(idleTimeReq)
 				mining = True
 			else:
 				if msg == False:
 					print(Fore.YELLOW + "Mining already running, not staring")
 					msg = True
 		elif getIdleTime() <= idleTimeReq and mining == True:
-			print("Pause mining")
-			print(Fore.RED + "Pauseing mining since idle time were less than {} Seconds".format(int(idleTimeReq)))
-
-			gpuControl("true", "0")
-			(idleTimeReq,False)
+			kill(idleTimeReq,False)
 			mining = False
 		print("Waiting {} seconds to check again\n".format(refreshRate))
 		time.sleep(refreshRate)
-
-
-
 
 #Run Script
 if __name__ == "__main__":
