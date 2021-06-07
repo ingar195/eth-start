@@ -27,7 +27,7 @@ def getIdleTime():
 
 def run(idleTimeReq):
     print(Fore.YELLOW + "Time were greater than {} Seconds, starting mining".format(idleTimeReq))
-    os.system("start " + '"" ' + '"C:\\Program Files\\EthMiner\\t-rex.exe"' + "  -c config.cfg")
+    os.system("start " + '"" ' + '"C:\\Program Files\\EthMiner\\t-rex.exe"' + "  -c config.json")
 
 def kill(idleTimeReq, interrupted):
 	try:
