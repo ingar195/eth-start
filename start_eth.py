@@ -2,6 +2,8 @@
 import os
 import time
 import subprocess
+import requests
+
 try:
 	subprocess.run("py -m pip install colorama", check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 except Exception as e:
@@ -35,6 +37,14 @@ def kill(idleTimeReq, interrupted):
 		print(Fore.RED + "Stopping mining since idle time were less than {} Seconds".format(int(idleTimeReq)))
 	except:
 		pass
+
+def getHashRate():
+	url = "http://127.0.0.1:4067/summary"
+	response = requests.get(url)
+	data = response.json()
+	hashRate = data["hashrate"]/1000000
+	print("{} MH/s".format(hashRate)) 
+	return hashRate
 
 def main():
 	print("Starting")
