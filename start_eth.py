@@ -40,19 +40,24 @@ def kill(idleTimeReq, interrupted):
 
 def getHashRate():
 	url = "http://127.0.0.1:4067/summary"
-	response = requests.get(url)
-	data = response.json()
-	hashRate = data["hashrate"]/1000000
-	print("{} MH/s".format(hashRate)) 
+	try:
+		response = requests.get(url)	
+		data = response.json()
+		hashRate = data["hashrate"]/1000000
+		print(Fore.GREEN +"{} MH/s".format(hashRate)) 
+	except:
+		print("No communication with miner")
+		hashRate = 0
 	return hashRate
 
 def main():
 	print("Starting")
-	idleTimeReq = 600   # Idle time before start in Seconds
-	refreshRate = 60    # How often to check in Seconds
+	idleTimeReq = 5   # Idle time before start in Seconds
+	refreshRate = 1    # How often to check in Seconds
 	mining = False
 	msg = False
 	while True:
+		getHashRate()
 		print(Fore.GREEN + "Idle time = {}".format(getIdleTime()))
 		if getIdleTime() >= idleTimeReq:
 			if mining == False:
