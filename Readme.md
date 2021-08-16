@@ -1,4 +1,4 @@
-# ETH-Start
+# TRex-ETH-Start
 
 This is a script for starting and stopping mining while idle
 
