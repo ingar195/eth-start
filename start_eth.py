@@ -69,23 +69,19 @@ def CheckRunningPrograms():
             
             if line != "" or line != "\n":
                 line = line.strip("\n")
-                print(line)
-                blacklist.append(line)
+                blacklist.append(line.lower())
     # Checks if program in blacklist is running
     for p in processes:
-        pName = p.name()
+        pName = p.name().lower()
         if pName in blacklist:
             print(f"{pName} is running")
-            return True
-        else:
-            print("None proceses in backlist ins running")
-            return False
+            return True        
 
 
 def main():
     print("Starting")
-    idleTimeReq = 5   # Idle time before start in Seconds
-    refreshRate = 1    # How often to check in Seconds
+    idleTimeReq = 60   # Idle time before start in Seconds
+    refreshRate = 3    # How often to check in Seconds
     mining = False
     msg = False
     while True:
