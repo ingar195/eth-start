@@ -3,6 +3,7 @@ import os
 import time
 import subprocess
 import requests
+import psutil
 
 try:
     subprocess.run("py -m pip install colorama", check=True,
@@ -58,6 +59,29 @@ def getHashRate():
     return hashRate
 
 
+def CheckRunningPrograms():
+
+    processes = psutil.process_iter()
+    blacklist = []
+    # Read Blacklist file
+    with open("blacklist.txt", "r") as f:
+        for line in f.readlines():
+            
+            if line != "" or line != "\n":
+                line = line.strip("\n")
+                print(line)
+                blacklist.append(line)
+    # Checks if program in blacklist is running
+    for p in processes:
+        pName = p.name()
+        if pName in blacklist:
+            print(f"{pName} is running")
+            return True
+        else:
+            print("None proceses in backlist ins running")
+            return False
+
+
 def main():
     print("Starting")
     idleTimeReq = 5   # Idle time before start in Seconds
@@ -76,8 +100,10 @@ def main():
                     print(Fore.YELLOW + "Mining already running, not staring")
                     msg = True
         elif getIdleTime() <= idleTimeReq and mining == True:
-            kill(idleTimeReq, False)
-            mining = False
+            blacklist = CheckRunningPrograms()
+            if blacklist:
+                kill(idleTimeReq, False)
+                mining = False
         print("Waiting {} seconds to check again\n".format(refreshRate))
         time.sleep(refreshRate)
 
