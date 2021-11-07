@@ -80,7 +80,7 @@ def CheckRunningPrograms():
 
 def main():
     print("Starting")
-    idleTimeReq = 60   # Idle time before start in Seconds
+    idleTimeReq = 10   # Idle time before start in Seconds
     refreshRate = 3    # How often to check in Seconds
     mining = False
     msg = False

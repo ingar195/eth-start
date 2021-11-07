@@ -1,2 +1,3 @@
 bf4.exe
 Modernwarfare.exe
+League of Legends.exe
