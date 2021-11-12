@@ -64,7 +64,7 @@ def CheckRunningPrograms():
     processes = psutil.process_iter()
     blacklist = []
     # Read Blacklist file
-    with open("blacklist.txt", "r") as f:
+    with open(r"D:\Workspace\eth-start\blacklist.txt", "r") as f:
         for line in f.readlines():
             
             if line != "" or line != "\n":
@@ -80,7 +80,7 @@ def CheckRunningPrograms():
 
 def main():
     print("Starting")
-    idleTimeReq = 10   # Idle time before start in Seconds
+    idleTimeReq = 60   # Idle time before start in Seconds
     refreshRate = 3    # How often to check in Seconds
     mining = False
     msg = False
