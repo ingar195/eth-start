@@ -5,6 +5,7 @@ import subprocess
 import requests
 import psutil
 import logging
+import json
 
 try:
     subprocess.run("py -m pip install colorama", check=True,
@@ -32,10 +33,9 @@ def getIdleTime():
     return idleTime / 1000.0
 
 
-def run(idleTimeReq):
+def run(idleTimeReq, trex_path):
     logging.debug("Time were greater than {} Seconds, starting mining".format(idleTimeReq))
-    os.system("start " + '"" ' + '"C:\\Users\\ingar\\Documents\\Mining\\t-rex.exe"' +
-              "  -c config.json --api-bind-http 0.0.0.0:4067")
+    os.system("start " + '"" ' + trex_path + " -c config.json --api-bind-http 0.0.0.0:4067")
 
 
 def kill(idleTimeReq, interrupted):
@@ -79,7 +79,7 @@ def CheckRunningPrograms():
             return True
 
 
-def main():
+def main(trex_path):
     logging.debug("Starting")
     idleTimeReq = 5  # Idle time before start in Seconds
     refreshRate = 3    # How often to check in Seconds
@@ -90,7 +90,7 @@ def main():
         logging.info("Idle time = {}".format(getIdleTime()))
         if getIdleTime() >= idleTimeReq:
             if mining == False:
-                run(idleTimeReq)
+                run(idleTimeReq, trex_path)
                 mining = True
             else:
                 if msg == False:
@@ -104,6 +104,18 @@ def main():
                 mining = False
         logging.info("Waiting {} seconds to check again".format(refreshRate))
         time.sleep(refreshRate)
+
+def ReadConfig():
+    logging.debug("readConfig")
+    with open("config.json", "r") as jf:
+        return json.load(jf)
+
+
+def GetTrexPath():
+    conf = ReadConfig()
+    trex_path = conf["trex_path"]
+    logging.debug(trex_path)
+    return trex_path
 
 
 # Run Script
@@ -119,7 +131,7 @@ if __name__ == "__main__":
         ])
 
     try:
-        main()
+        main(GetTrexPath())
     except KeyboardInterrupt:
         kill(None, True)
         logging.error("Script Interrupted")
