@@ -81,7 +81,7 @@ def CheckRunningPrograms():
 
 def main(trex_path):
     logging.debug("Starting")
-    idleTimeReq = 5  # Idle time before start in Seconds
+    idleTimeReq = 60  # Idle time before start in Seconds
     refreshRate = 3    # How often to check in Seconds
     mining = False
     msg = False
