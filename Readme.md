@@ -15,7 +15,6 @@ Change line 1, 48 and 49 in config.json
            
 ```json
 "trex_path": "C:\\Users\\ingar\\Documents\\Mining\\t-rex.exe",
-
 "user": "WALLET_ADDRESS",
 "worker": "WORKER_NAME"
 ```
