@@ -10,7 +10,7 @@ try:
     subprocess.run("py -m pip install colorama", check=True,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 except Exception as e:
-    print(e)
+    logging.error(e)
     exit()
 from colorama import Fore, init
 from ctypes import Structure, windll, c_uint, sizeof, byref, c_ulong
@@ -33,8 +33,8 @@ def getIdleTime():
 
 
 def run(idleTimeReq):
-    print(Fore.YELLOW + "Time were greater than {} Seconds, starting mining".format(idleTimeReq))
-    os.system("start " + '"" ' + '"C:\\Program Files\\EthMiner\\t-rex.exe"' +
+    logging.debug("Time were greater than {} Seconds, starting mining".format(idleTimeReq))
+    os.system("start " + '"" ' + '"C:\\Users\\ingar\\Documents\\Mining\\t-rex.exe"' +
               "  -c config.json --api-bind-http 0.0.0.0:4067")
 
 
@@ -42,7 +42,7 @@ def kill(idleTimeReq, interrupted):
     try:
         subprocess.run('taskkill /IM t-rex.exe', check=True,
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        print(Fore.RED + "Stopping mining since idle time were less than {} Seconds".format(int(idleTimeReq)))
+        logging.debug("Stopping mining since idle time were less than {} Seconds".format(int(idleTimeReq)))
     except:
         pass
 
@@ -53,9 +53,9 @@ def getHashRate():
         response = requests.get(url)
         data = response.json()
         hashRate = data["hashrate"]/1000000
-        print(Fore.GREEN + "{} MH/s".format(hashRate))
+        logging.debug("{} MH/s".format(hashRate))
     except:
-        print("No communication with miner")
+        logging.debug("No communication with miner")
         hashRate = 0
     return hashRate
 
@@ -75,33 +75,34 @@ def CheckRunningPrograms():
     for p in processes:
         pName = p.name().lower()
         if pName in blacklist:
-            print(f"{pName} is running")
+            logging.debug(f"{pName} is running")
             return True
 
 
 def main():
-    print("Starting")
-    idleTimeReq = 60   # Idle time before start in Seconds
+    logging.debug("Starting")
+    idleTimeReq = 5  # Idle time before start in Seconds
     refreshRate = 3    # How often to check in Seconds
     mining = False
     msg = False
     while True:
         getHashRate()
-        print(Fore.GREEN + "Idle time = {}".format(getIdleTime()))
+        logging.info("Idle time = {}".format(getIdleTime()))
         if getIdleTime() >= idleTimeReq:
             if mining == False:
                 run(idleTimeReq)
                 mining = True
             else:
                 if msg == False:
-                    print(Fore.YELLOW + "Mining already running, not staring")
+                    logging.info("Mining already running, not staring")
                     msg = True
         elif getIdleTime() <= idleTimeReq and mining == True:
             blacklist = CheckRunningPrograms()
             if blacklist:
+                logging.debug("Program in blacklist running")
                 kill(idleTimeReq, False)
                 mining = False
-        print("Waiting {} seconds to check again\n".format(refreshRate))
+        logging.info("Waiting {} seconds to check again".format(refreshRate))
         time.sleep(refreshRate)
 
 
@@ -113,13 +114,12 @@ if __name__ == "__main__":
         datefmt='%d-%m-%Y:%H:%M:%S',
         level=logging.DEBUG,
         handlers=[
-            logging.FileHandler("Tracker.log"),
+            logging.FileHandler("start_eth.log"),
             logging.StreamHandler()
         ])
 
     try:
-        init(autoreset=True)
         main()
     except KeyboardInterrupt:
         kill(None, True)
-        print("Script Interrupted")
+        logging.error("Script Interrupted")
