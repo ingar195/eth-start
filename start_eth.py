@@ -67,7 +67,7 @@ def CheckRunningPrograms():
     # Read Blacklist file
     with open(r"D:\Workspace\eth-start\blacklist.txt", "r") as f:
         for line in f.readlines():
-            
+
             if line != "" or line != "\n":
                 line = line.strip("\n")
                 blacklist.append(line.lower())
@@ -76,7 +76,7 @@ def CheckRunningPrograms():
         pName = p.name().lower()
         if pName in blacklist:
             print(f"{pName} is running")
-            return True        
+            return True
 
 
 def main():
@@ -109,13 +109,13 @@ def main():
 if __name__ == "__main__":
 
     logging.basicConfig(
-    format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
-    datefmt='%d-%m-%Y:%H:%M:%S',
-    level=logging.DEBUG,
-    handlers=[
-        logging.FileHandler("Tracker.log"),
-        logging.StreamHandler()
-    ])
+        format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+        datefmt='%d-%m-%Y:%H:%M:%S',
+        level=logging.DEBUG,
+        handlers=[
+            logging.FileHandler("Tracker.log"),
+            logging.StreamHandler()
+        ])
 
     try:
         init(autoreset=True)
