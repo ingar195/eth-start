@@ -11,9 +11,11 @@ Remember to add python to path under installation
 Download Trex [Dowload here](https://github.com/trexminer/T-Rex/releases)
 
 ## Setup and config
-Change line 48 and 49 in config.json
+Change line 1, 48 and 49 in config.json
            
 ```json
+"trex_path": "C:\\Users\\ingar\\Documents\\Mining\\t-rex.exe",
+
 "user": "WALLET_ADDRESS",
 "worker": "WORKER_NAME"
 ```
