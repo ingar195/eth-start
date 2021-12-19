@@ -124,7 +124,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
         datefmt='%d-%m-%Y:%H:%M:%S',
-        level=logging.DEBUG,
+        level=logging.INFO,
         handlers=[
             logging.FileHandler("start_eth.log"),
             logging.StreamHandler()
