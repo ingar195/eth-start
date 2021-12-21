@@ -33,9 +33,10 @@ def getIdleTime():
     return idleTime / 1000.0
 
 
-def run(idleTimeReq, trex_path):
-    logging.debug("Time were greater than {} Seconds, starting mining".format(idleTimeReq))
-    os.system("start " + '"" ' + trex_path + " -c config.json --api-bind-http 0.0.0.0:4067")
+def run(idleTimeReq, trex_path, trex_config_path):
+    logging.info("Time were greater than {} Seconds, starting mining".format(idleTimeReq))
+    logging.debug("start " + '"" ' + trex_path + " -c {} --api-bind-http 0.0.0.0:4067".format(trex_config_path))
+    os.system("start " + '"" ' + trex_path + " -c {} --api-bind-http 0.0.0.0:4067".format(trex_config_path))
 
 
 def kill(idleTimeReq, interrupted):
@@ -79,9 +80,11 @@ def CheckRunningPrograms():
             return True
 
 
-def main(trex_path):
+def main(trexConf):
+    trex_path = trexConf[0]
+    trex_config_path = trexConf[1]
     logging.debug("Starting")
-    idleTimeReq = 60  # Idle time before start in Seconds
+    idleTimeReq = 10  # Idle time before start in Seconds
     refreshRate = 3    # How often to check in Seconds
     mining = False
     msg = False
@@ -90,7 +93,7 @@ def main(trex_path):
         logging.info("Idle time = {}".format(getIdleTime()))
         if getIdleTime() >= idleTimeReq:
             if mining == False:
-                run(idleTimeReq, trex_path)
+                run(idleTimeReq, trex_path, trex_config_path)
                 mining = True
             else:
                 if msg == False:
@@ -111,11 +114,12 @@ def ReadConfig():
         return json.load(jf)
 
 
-def GetTrexPath():
+def GetTrexConf():
     conf = ReadConfig()
     trex_path = conf["trex_path"]
+    trex_config_path = conf["trex_config_path"]
     logging.debug(trex_path)
-    return trex_path
+    return trex_path, trex_config_path
 
 
 # Run Script
@@ -124,14 +128,14 @@ if __name__ == "__main__":
     logging.basicConfig(
         format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
         datefmt='%d-%m-%Y:%H:%M:%S',
-        level=logging.INFO,
+        level=logging.DEBUG,
         handlers=[
             logging.FileHandler("start_eth.log"),
             logging.StreamHandler()
         ])
-
+    logging.info("--------------------------------------------------")
     try:
-        main(GetTrexPath())
+        main(GetTrexConf())
     except KeyboardInterrupt:
         kill(None, True)
         logging.error("Script Interrupted")
