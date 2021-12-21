@@ -1,5 +1,6 @@
 {
     "trex_path": "C:\\Users\\ingar\\Documents\\Mining\\t-rex.exe",
+    "trex_config_path": "C:\\Users\\ingar\\Documents\\Mining\\config.json",
     "ab_indexing": false,
     "algo": "ethash",
     "api_bind_http": "127.0.0.1:4067",
