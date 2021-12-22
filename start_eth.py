@@ -6,14 +6,6 @@ import requests
 import psutil
 import logging
 import json
-
-try:
-    subprocess.run("py -m pip install colorama", check=True,
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-except Exception as e:
-    logging.error(e)
-    exit()
-from colorama import Fore, init
 from ctypes import Structure, windll, c_uint, sizeof, byref, c_ulong
 
 
@@ -35,14 +27,13 @@ def getIdleTime():
 
 def run(idleTimeReq, trex_path, trex_config_path):
     logging.info("Time were greater than {} Seconds, starting mining".format(idleTimeReq))
-    logging.debug("start " + '"" ' + trex_path + " -c {} --api-bind-http 0.0.0.0:4067".format(trex_config_path))
-    os.system("start " + '"" ' + trex_path + " -c {} --api-bind-http 0.0.0.0:4067".format(trex_config_path))
+    logging.debug(f"{trex_path} -c {trex_config_path} --api-bind-http 0.0.0.0:4067")
+    os.system("start " + '"" ' + f"{trex_path} -c {trex_config_path} --api-bind-http 0.0.0.0:4067")
 
 
 def kill(idleTimeReq, interrupted):
     try:
-        subprocess.run('taskkill /IM t-rex.exe', check=True,
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(f'taskkill /IM t-rex.exe', check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         logging.debug("Stopping mining since idle time were less than {} Seconds".format(int(idleTimeReq)))
     except:
         pass
@@ -63,42 +54,62 @@ def getHashRate():
 
 def BlackList(trex_blacklist_path):
     # Read Blacklist file
+    blacklist = []
     with open(trex_blacklist_path, "r") as f:
         for line in f.readlines():
 
             if line != "" or line != "\n":
                 line = line.strip("\n")
-                logging.debug(line)
-                isRunning = CheckIfRunning(line.lower())
-                if isRunning.lower() in line.lower():
-                    return isRunning
-                else:
-                    return ""
+                # logging.debug(line)
+                blacklist.append(line)
+
+                isRunning = CheckIfRunning(line)
+                logging.debug(isRunning)
+                if isRunning != "":
+                    if isRunning is not None:
+                        print(f"'{isRunning}'")
+                        # input("asdfasdffasd")
+                        return isRunning
 
 
 def CheckIfRunning(process):
     # Checks if program in blacklist is running
     processes = psutil.process_iter()
-    logging.debug("--------------------------------------------------------------------------------------")
-    for p in processes:
-        pName = p.name().lower()
+    if type(process) == list:
+        logging.debug("list")
+        for p in processes:
+            pName = p.name().lower()
+            # logging.debug(pName) 
+            if pName in process:
+                logging.debug(f"{pName} is running______________________________________________________________")
+                return pName
+    else:        
+        logging.debug("else")
+        ret = None
+        for p in processes:
+            pName = p.name().lower()            
+            # logging.debug(pName)         
+            if process != "":
+                if process.lower() in pName.lower():
+                    
+                    logging.debug(f"{pName} is running______________________________________________________________")
+                    ret = pName
+                    print (pName)
+                    print (ret)
+        logging.debug(f"ret = '{ret}'")
+        return ret
         
-        logging.debug(pName)
-        
-
-        if process.lower() in pName.lower():
-            logging.debug(f"{pName} is running______________________________________________________________")
-            return pName
-    return ""
 
 
 def main(trexConf):
+    logging.debug(trexConf)
     trex_path = trexConf[0]
     trex_config_path = trexConf[1]
     trex_blacklist_path = trexConf[2]
+
     logging.debug("Starting")
     idleTimeReq = 10  # Idle time before start in Seconds
-    refreshRate = 15    # How often to check in Seconds
+    refreshRate = 3    # How often to check in Seconds
     mining = False
     msg = False
     while True:
@@ -119,10 +130,8 @@ def main(trexConf):
                 logging.info(f"{blacklist} in blacklist running. Stopping mining")
                 kill(idleTimeReq, False)
                 mining = False
-        if mining:
-            logging.info("Is mining, but no blacklisted programs are running. Waiting {} seconds to check again".format(refreshRate))
-        else:
-            logging.info("Waiting {} seconds to check again".format(refreshRate))
+       
+        logging.info("Is mining, but no blacklisted programs are running. Waiting {} seconds to check again".format(refreshRate))
         time.sleep(refreshRate)
 
 
@@ -147,7 +156,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
         datefmt='%d-%m-%Y:%H:%M:%S',
-        level=logging.INFO,
+        level=logging.DEBUG,
         handlers=[
             logging.FileHandler("start_eth.log"),
             logging.StreamHandler()
