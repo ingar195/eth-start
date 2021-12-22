@@ -76,7 +76,7 @@ def CheckRunningPrograms():
     for p in processes:
         pName = p.name().lower()
         if pName in blacklist:
-            logging.debug(f"{pName} is running")
+            logging.debug(f"{pName} is running______________________________________________________________")
             return True
 
 
@@ -102,7 +102,7 @@ def main(trexConf):
         elif getIdleTime() <= idleTimeReq and mining == True:
             blacklist = CheckRunningPrograms()
             if blacklist:
-                logging.debug("Program in blacklist running")
+                logging.debug("Program in blacklist running. Stopping mining")
                 kill(idleTimeReq, False)
                 mining = False
         logging.info("Waiting {} seconds to check again".format(refreshRate))
