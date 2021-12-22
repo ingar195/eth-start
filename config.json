@@ -1,6 +1,7 @@
 {
     "trex_path": "C:\\Users\\ingar\\Documents\\Mining\\t-rex.exe",
     "trex_config_path": "C:\\Users\\ingar\\Documents\\Mining\\config.json",
+    "trex_blacklist_path": "D:\\Workspace\\eth-start\\blacklist.txt",
     "ab_indexing": false,
     "algo": "ethash",
     "api_bind_http": "127.0.0.1:4067",
