@@ -1,4 +1,6 @@
 # Load and Install dependencies
+from asyncio.log import logger
+from multiprocessing.pool import IMapUnorderedIterator
 import os
 import time
 import subprocess
@@ -33,9 +35,9 @@ def getIdleTime():
     return idleTime / 1000.0
 
 
-def run(idleTimeReq, trex_path):
+def run(idleTimeReq, trex_path, trex_config, trex_log):
     logging.debug("Time were greater than {} Seconds, starting mining".format(idleTimeReq))
-    os.system("start " + '"" ' + trex_path + " -c config.json --api-bind-http 0.0.0.0:4067")
+    os.system("start " + '"" ' + trex_path + f" -c {trex_config} --api-bind-http 0.0.0.0:4067")
 
 
 def kill(idleTimeReq, interrupted):
@@ -79,10 +81,26 @@ def CheckRunningPrograms():
             return True
 
 
-def main(trex_path):
+def main(conf):
+    logging.debug("-------------------------------------------------------------")
     logging.debug("Starting")
-    idleTimeReq = 5  # Idle time before start in Seconds
-    refreshRate = 3    # How often to check in Seconds
+
+    trex_path = conf["trex_path"]
+    trex_config = conf["trex_config"]
+    trex_log = conf["trex_log"]
+    refreshRate = conf["refreshRate"]
+    idleTimeReq = conf["idleTimeReq"]
+    user = conf["pools"][0]["user"]
+    worker = conf["pools"][0]["worker"]
+
+    logger.debug(trex_path)
+    logger.debug(trex_config)
+    logger.debug(trex_log)
+    logger.debug(refreshRate)
+    logger.debug(idleTimeReq)
+    logger.debug(user)
+    logger.debug(worker)
+    input()
     mining = False
     msg = False
     while True:
@@ -90,7 +108,7 @@ def main(trex_path):
         logging.info("Idle time = {}".format(getIdleTime()))
         if getIdleTime() >= idleTimeReq:
             if mining == False:
-                run(idleTimeReq, trex_path)
+                run(idleTimeReq, trex_path, trex_config, trex_log)
                 mining = True
             else:
                 if msg == False:
@@ -105,17 +123,17 @@ def main(trex_path):
         logging.info("Waiting {} seconds to check again".format(refreshRate))
         time.sleep(refreshRate)
 
+
 def ReadConfig():
     logging.debug("readConfig")
     with open("config.json", "r") as jf:
         return json.load(jf)
 
 
-def GetTrexPath():
+def GetTrexConfig():
     conf = ReadConfig()
-    trex_path = conf["trex_path"]
-    logging.debug(trex_path)
-    return trex_path
+    logging.debug(conf)
+    return conf
 
 
 # Run Script
@@ -131,7 +149,8 @@ if __name__ == "__main__":
         ])
 
     try:
-        main(GetTrexPath())
+        main(GetTrexConfig())
+        
     except KeyboardInterrupt:
         kill(None, True)
         logging.error("Script Interrupted")
