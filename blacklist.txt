@@ -4,3 +4,4 @@ League of Legends.exe
 Control_DX12.exe
 Control_DX11.exe
 BF2042.exe
+MMC-Win64-Shipping.exe
