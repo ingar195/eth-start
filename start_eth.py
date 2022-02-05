@@ -101,7 +101,7 @@ def main(conf, trex_config_path):
     logging.debug(idleTimeReq)
     logging.debug(user)
     logging.debug(worker)
-    input()
+
     mining = False
     msg = False
     while True:
