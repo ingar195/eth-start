@@ -1,6 +1,4 @@
 # Load and Install dependencies
-from asyncio.log import logger
-from multiprocessing.pool import IMapUnorderedIterator
 import os
 import time
 import subprocess
@@ -8,6 +6,8 @@ import requests
 import psutil
 import logging
 import json
+import sys
+
 
 try:
     subprocess.run("py -m pip install colorama", check=True,
@@ -86,20 +86,21 @@ def main(conf):
     logging.debug("Starting")
 
     trex_path = conf["trex_path"]
-    trex_config = conf["trex_config"]
+    # trex_config = conf["trex_config"]
     trex_log = conf["trex_log"]
     refreshRate = conf["refreshRate"]
     idleTimeReq = conf["idleTimeReq"]
     user = conf["pools"][0]["user"]
-    worker = conf["pools"][0]["worker"]
+    worker = conf["pools"][0]["worker"] 
+    
 
-    logger.debug(trex_path)
-    logger.debug(trex_config)
-    logger.debug(trex_log)
-    logger.debug(refreshRate)
-    logger.debug(idleTimeReq)
-    logger.debug(user)
-    logger.debug(worker)
+    logging.debug(trex_path)
+    # logging.debug(trex_config)
+    logging.debug(trex_log)
+    logging.debug(refreshRate)
+    logging.debug(idleTimeReq)
+    logging.debug(user)
+    logging.debug(worker)
     input()
     mining = False
     msg = False
@@ -126,7 +127,11 @@ def main(conf):
 
 def ReadConfig():
     logging.debug("readConfig")
-    with open("config.json", "r") as jf:
+    trex_config_path = "config.json"
+    if len(sys.argv) == 2: 
+        trex_config_path = sys.argv[1]
+    logging.debug(f"Config file = {trex_config_path}")
+    with open(trex_config_path, "r") as jf:
         return json.load(jf)
 
 
