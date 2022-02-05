@@ -81,7 +81,7 @@ def CheckRunningPrograms():
             return True
 
 
-def main(conf):
+def main(conf, trex_config_path):
     logging.debug("-------------------------------------------------------------")
     logging.debug("Starting")
 
@@ -109,7 +109,7 @@ def main(conf):
         logging.info("Idle time = {}".format(getIdleTime()))
         if getIdleTime() >= idleTimeReq:
             if mining == False:
-                run(idleTimeReq, trex_path, trex_config, trex_log)
+                run(idleTimeReq, trex_path, trex_config_path, trex_log)
                 mining = True
             else:
                 if msg == False:
@@ -126,24 +126,25 @@ def main(conf):
 
 
 def ReadConfig():
-    logging.debug("readConfig")
+    logging.debug("readConfig")    
     trex_config_path = "config.json"
     if len(sys.argv) == 2: 
         trex_config_path = sys.argv[1]
     logging.debug(f"Config file = {trex_config_path}")
     with open(trex_config_path, "r") as jf:
-        return json.load(jf)
+        return json.load(jf), trex_config_path
+     
 
 
 def GetTrexConfig():
-    conf = ReadConfig()
+    conf, trex_config_path = ReadConfig()
     logging.debug(conf)
-    return conf
+    return conf, trex_config_path
 
 
 # Run Script
 if __name__ == "__main__":
-
+    
     logging.basicConfig(
         format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
         datefmt='%d-%m-%Y:%H:%M:%S',
@@ -154,7 +155,8 @@ if __name__ == "__main__":
         ])
 
     try:
-        main(GetTrexConfig())
+        conf, trex_config_path = GetTrexConfig()
+        main(conf, trex_config_path)
         
     except KeyboardInterrupt:
         kill(None, True)
