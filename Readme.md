@@ -1,14 +1,14 @@
-# TRex-ETH-Start
+# T-Rex ETH-Start
 
 This is a script for starting and stopping mining while idle
 
 ## Installation
 
-Install Python 3 x64 [Dowload here](https://www.python.org/downloads/)
+Install Python 3 x64 [Download here](https://www.python.org/downloads/)
 
 Remember to add python to path under installation
 
-Download Trex [Dowload here](https://github.com/trexminer/T-Rex/releases)
+Download Trex [Download here](https://github.com/trexminer/T-Rex/releases)
 
 ## Setup and config
 Change line 48 and 49 in config.json
