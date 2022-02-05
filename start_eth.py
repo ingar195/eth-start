@@ -36,7 +36,7 @@ def getIdleTime():
 
 
 def run(idleTimeReq, trex_path, trex_config, trex_log):
-    logging.debug("Time were greater than {} Seconds, starting mining".format(idleTimeReq))
+    logging.info("Time were greater than {} Seconds, starting mining".format(idleTimeReq))
     os.system("start " + '"" ' + trex_path + f" -c {trex_config} --api-bind-http 0.0.0.0:4067")
 
 
@@ -44,7 +44,7 @@ def kill(idleTimeReq, interrupted):
     try:
         subprocess.run('taskkill /IM t-rex.exe', check=True,
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        logging.debug("Stopping mining since idle time were less than {} Seconds".format(int(idleTimeReq)))
+        logging.info("Stopping mining since idle time were less than {} Seconds".format(int(idleTimeReq)))
     except:
         pass
 
@@ -82,8 +82,8 @@ def CheckRunningPrograms():
 
 
 def main(conf, trex_config_path):
-    logging.debug("-------------------------------------------------------------")
-    logging.debug("Starting")
+    logging.info("-------------------------------------------------------------")
+    logging.info("Starting")
 
     trex_path = conf["trex_path"]
     # trex_config = conf["trex_config"]
@@ -106,22 +106,22 @@ def main(conf, trex_config_path):
     msg = False
     while True:
         getHashRate()
-        logging.info("Idle time = {}".format(getIdleTime()))
+        logging.debug("Idle time = {}".format(getIdleTime()))
         if getIdleTime() >= idleTimeReq:
             if mining == False:
                 run(idleTimeReq, trex_path, trex_config_path, trex_log)
                 mining = True
             else:
                 if msg == False:
-                    logging.info("Mining already running, not staring")
+                    logging.debug("Mining already running, not staring")
                     msg = True
         elif getIdleTime() <= idleTimeReq and mining == True:
             blacklist = CheckRunningPrograms()
             if blacklist:
-                logging.debug("Program in blacklist running")
+                logging.info("Program in blacklist running")
                 kill(idleTimeReq, False)
                 mining = False
-        logging.info("Waiting {} seconds to check again".format(refreshRate))
+        logging.debug("Waiting {} seconds to check again".format(refreshRate))
         time.sleep(refreshRate)
 
 
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
         datefmt='%d-%m-%Y:%H:%M:%S',
-        level=logging.DEBUG,
+        level=logging.INFO,
         handlers=[
             logging.FileHandler("start_eth.log"),
             logging.StreamHandler()
