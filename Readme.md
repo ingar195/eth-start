@@ -11,11 +11,20 @@ Remember to add python to path under installation
 Download Trex [Download here](https://github.com/trexminer/T-Rex/releases)
 
 ## Setup and config
-Change line 48 and 49 in config.json
+
+Change line 2-4 in config.json to match the locations on your pc
+           
+```json
+    "trex_path": "path_to_trex_executable",
+    "trex_log": "path_to_trex_log",
+    "refreshRate": 3,
+    "idleTimeReq": 10,
+```
+Change line 52 and 53 in config.json
            
 ```json
 "user": "WALLET_ADDRESS",
-"worker": "WORKER_NAME"
+"worker": "WORKER_NAME",
 ```
 
 Copy the trex.exe and config.json to 
